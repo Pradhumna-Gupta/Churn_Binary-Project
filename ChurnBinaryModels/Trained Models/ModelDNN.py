@@ -4,7 +4,6 @@ import joblib
 from tensorflow.keras.models import load_model
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-current_dir = os.path.dirname(os.path.abspath(__file__))
 base_path = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(base_path, 'DNN.keras')
 scaler_path = os.path.join(base_path, 'scalerDNN.pkl')
@@ -13,7 +12,7 @@ DNN_model = load_model(model_path)
 Scaler = joblib.load(scaler_path)
 Db = pd.read_csv(data_path)
 print("Model and Scaler loaded successfully!")
-data_path = os.path.join(current_dir, '..', 'data', 'churn_dataset.csv')
+data_path = os.path.join(base_path, '..', 'data', 'churn_dataset.csv')
 Db=pd.read_csv(data_path)
 Db.drop(['customerID'], axis=1, inplace=True)
 Db.dropna(inplace=True)
@@ -31,7 +30,8 @@ X_train_ = Scaler.fit_transform(X_train_)
 X_val = Scaler.transform(X_val)
 X_test = Scaler.transform(X_test)
 def predict_churn(X,Y):
-    preds = DNN_model.predict(X)
+    probs = DNN_model.predict(X, verbose=0)
+    preds = (probs > 0.5).astype("int32")
     acc = accuracy_score(Y, preds)
     return acc
 print(f"Training Accuracy: {predict_churn(X_train_,Y_train_) * 100:.2f}%")
