@@ -11,6 +11,14 @@ Scaler = joblib.load(scaler_path)
 print("Model and Scaler loaded successfully!")
 data_path = os.path.join(current_dir, '..', 'data', 'churn_dataset.csv')
 Db=pd.read_csv(data_path)
+Db.drop(['customerID'], axis=1, inplace=True)
+Db.dropna(inplace=True)
+Db = pd.get_dummies(Db, columns=['InternetService', 'Contract', 'PaymentMethod','MultipleLines','OnlineSecurity','OnlineBackup','DeviceProtection','TechSupport','StreamingTV','StreamingMovies'], drop_first=False)
+binary_columns = ['Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
+Db[binary_columns] = Db[binary_columns].replace({'Yes': 1, 'No': 0})
+Db['gender'] = Db['gender'].map({'Male': 1, 'Female': 0})
+columns = [ 'InternetService_DSL', 'InternetService_Fiber optic', 'InternetService_No', 'Contract_Month-to-month', 'Contract_One year', 'Contract_Two year','PaymentMethod_Bank transfer (automatic)', 'PaymentMethod_Credit card (automatic)', 'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check','DeviceProtection_Yes','DeviceProtection_No','DeviceProtection_No internet service','TechSupport_Yes','TechSupport_No','TechSupport_No internet service','StreamingTV_Yes','StreamingTV_No','StreamingTV_No internet service','StreamingMovies_Yes','StreamingMovies_No','StreamingMovies_No internet service']
+Db[columns] = Db[columns].astype(int)
 X = Db.drop('Churn_binary', axis=1)
 Y = Db['Churn_binary']
 X_train , X_test , Y_train , Y_test = train_test_split(X,Y,test_size =.2,random_state=43)
