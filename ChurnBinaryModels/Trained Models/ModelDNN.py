@@ -4,6 +4,7 @@ import joblib
 from tensorflow.keras.models import load_model
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
+current_dir = os.path.dirname(os.path.abspath(__file__))
 base_path = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(base_path, 'DNN.keras')
 scaler_path = os.path.join(base_path, 'scalerDNN.pkl')
